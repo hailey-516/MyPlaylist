@@ -1,20 +1,18 @@
 package com.kh.mini.playlist.view;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.kh.mini.chat.ChatClient;
-import com.kh.mini.chat.ChatServer;
 import com.kh.mini.playlist.controller.PlayController;
 import com.kh.mini.playlist.model.vo.Music;
 
 public class PlayMenu {
-	private Scanner sc = new Scanner(System.in);
-	private PlayController pc = new PlayController();
-	private boolean isServerRunning = false;	// 채팅 서버 실행 여부를 나타내는 플래그
-    private int serverPort = 3000;	// 기본 포트 번호 설정
-	
-	public void mainMenu() {
+    private Scanner sc = new Scanner(System.in);
+    private PlayController pc = new PlayController();
+
+    public void mainMenu() {
 		System.out.print("이름을 입력해 주세요 : ");
 		String name = sc.nextLine();
 		
@@ -31,13 +29,19 @@ public class PlayMenu {
 			System.out.println("6. 음악 재생");
 			System.out.println("7. 나의 플레이리스트를 파일로 저장");
 			System.out.println("8. 나의 플레이리스트 파일에서 불러오기");
-			System.out.println("9. 채팅 서버 시작/종료");
-			System.out.println("10. 채팅 참여하기");
+			System.out.println("9. 랜덤 곡 추가(Top 100!)");
 			System.out.println("0. 종료");
 			System.out.print("메뉴 번호 : ");
 			
-			int menu = sc.nextInt();
-			sc.nextLine();
+			 int menu;
+	            if (sc.hasNextInt()) {
+	                menu = sc.nextInt();
+	                sc.nextLine();
+	            } else {
+	                System.out.println("잘못된 입력입니다. 숫자를 입력해 주세요.");
+	                sc.next();  // 잘못된 입력 폐기
+	                continue;
+	            }
 			
 			switch(menu) {
 			case 1:
@@ -57,11 +61,9 @@ public class PlayMenu {
 			case 8:
 				fileOpen(); break;
 			case 9:
-                toggleChatServer(); break;
-            case 10:
-                startChat(); break;
-			case 0:
-				System.out.println("프로그램을 종료합니다.");
+				addRandomTrack(); break;
+            case 0:
+                System.out.println("프로그램을 종료합니다.");
 				return;
 			default:
 				System.out.println("잘못 입력했습니다. 다시 입력해 주세요.");
@@ -95,11 +97,11 @@ public class PlayMenu {
 		if(playlist.isEmpty()) {
 			System.out.println("조회할 음악이 없습니다. 음악을 추가해 주세요.");
 		} else {
-			System.out.println("。..。:+* playlist *+:。.. 。");
+			System.out.println("───── 。..。:+* playlist *+:。.. 。─────");
 			for(int i=0; i<playlist.size(); i++) {
 				System.out.println(playlist.get(i));
 			}
-			System.out.println("───✱*.｡:｡✱*.:｡✧*.｡✰*.:｡✧*.｡:｡*.｡✱ ───");
+			System.out.println("─── ✱*.｡:｡✱*.:｡✧*.｡✰*.:｡✧*.｡:｡*.｡✱ ───");
 		}
 		
 	}
@@ -157,36 +159,19 @@ public class PlayMenu {
 	}
 	
 	public void fileSave() {
-		System.out.print("저장할 파일명을 입력하세요 : ");
+		System.out.print("저장할 파일명을 입력하세요(ex. 파일명.txt) : ");
 		String filePath = sc.nextLine();
 		pc.fileSave(filePath);
 	}
 	
 	public void fileOpen() {
-		System.out.print("불러올 파일명을 입력하세요 : ");
+		System.out.print("불러올 파일명을 입력하세요(ex. 파일명.txt) : ");
 		String filePath = sc.nextLine();
 		pc.fileOpen(filePath);
 	}
 	
-	public void toggleChatServer() {
-		if (isServerRunning) {
-			ChatServer.stopServer(); // 서버가 실행 중이면 서버 종료
-		} else {
-			System.out.println("채팅 서버 포트를 입력하세요 : ");
-			serverPort = sc.nextInt();
-			sc.nextLine();
-			ChatServer.startServer(serverPort);	// 서버 시작
-		}
-		isServerRunning = !isServerRunning;	// 서버 실행 상태 토글
-    }
-
-    public void startChat() {
-        System.out.print("채팅 서버 IP를 입력하세요: ");
-        String ip = sc.nextLine();
-        System.out.print("채팅 서버 포트를 입력하세요: ");
-        int port = sc.nextInt();
-        sc.nextLine();
-        ChatClient.startChat(ip, port);	// 채팅 클라이언트 시작
+	public void addRandomTrack() {
+        pc.addRandomTrack();
     }
 	
-}
+ }

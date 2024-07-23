@@ -1,8 +1,6 @@
 package com.kh.mini.playlist.model.vo;
 
-import java.io.Serializable;
-
-public class Music implements Comparable<Music>, Serializable {
+public class Music implements Comparable<Music> {
 	
 	private String title;
 	private String artist;
